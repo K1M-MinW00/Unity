@@ -4,15 +4,74 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-  public float speed;
-  
-  void Update()
-  {
-    float h = Input.GetAxisRaw("Horizontal");
-    float v = Input.GetAxisRaw("Vertical");
-    Vector3 curPos = transform.position;
-    Vector3 nextPos = new Vector3(h, v, 0) * speed * Time.deltaTime; // transform 이동에는 Time.DeltaTime 사용
+    public float speed;
+    public bool isTouchTop;
+    public bool isTouchBottom;
+    public bool isTouchRight;
+    public bool isTouchLeft;
 
-    transform.position = curPos + nextPos;
+    Animator animator;
+
+    void Awake()
+    {
+        animator = GetComponent<Animator>();
+    }
+
+    void Update()
+    {
+        float h = Input.GetAxisRaw("Horizontal");
+        if ((isTouchRight && h == 1) || (isTouchLeft && h == -1))
+            h = 0; // 경계 이상 넘지 못하도록 설정
+
+        float v = Input.GetAxisRaw("Vertical");
+        if ((isTouchTop && v == 1) || (isTouchBottom && v == -1))
+            v = 0; // 경계 이상 넘지 못하도록 설정
+
+        Vector3 curPos = transform.position;
+        Vector3 nextPos = new Vector3(h, v, 0) * speed * Time.deltaTime; // transform 이동에는 Time.DeltaTime 사용
+
+        transform.position = curPos + nextPos;
+
+
+        if(Input.GetButtonDown("Horizontal") || Input.GetButtonUp("Horizontal"))
+        {
+            animator.SetInteger("Input", (int)h);
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.gameObject.tag == "Border")
+        {
+            switch(collision.gameObject.name)
+            {
+                case "Top":
+                    isTouchTop = true; break;
+                case "Bottom":
+                    isTouchBottom = true; break;
+                case "Right":
+                    isTouchRight = true; break;
+                case "Left":
+                    isTouchLeft = true; break;
+            }
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Border")
+        {
+            switch (collision.gameObject.name)
+            {
+                case "Top":
+                    isTouchTop = false; break;
+                case "Bottom":
+                    isTouchBottom = false; break;
+                case "Right":
+                    isTouchRight = false; break;
+                case "Left":
+                    isTouchLeft = false; break;
+            }
+        }
     }
 }
