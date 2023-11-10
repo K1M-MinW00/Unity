@@ -5,12 +5,15 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public float speed;
     public bool isTouchTop;
     public bool isTouchBottom;
     public bool isTouchRight;
     public bool isTouchLeft;
+    public bool isHit;
 
+    public int life;
+    public int score;
+    public float speed;
     public float maxShotDelay;
     public float curShotDelay;
     public float power;
@@ -117,8 +120,23 @@ public class Player : MonoBehaviour
         }
         else if(collision.gameObject.tag == "Enemy" || collision.gameObject.tag == "EnemyBullet")
         {
-            gameManager.RespawnPlayer();
+            if (isHit)
+                return;
+
+            isHit = true;
+            life--;
+            gameManager.UpdateLifeIcon(life);
+
+            if(life <= 0)
+            {
+                gameManager.GameOver();
+            }
+            else
+            {
+                gameManager.RespawnPlayer();
+            }
             gameObject.SetActive(false);
+            Destroy(collision.gameObject);
         }
     }
 
