@@ -7,7 +7,7 @@ public class Rtan : MonoBehaviour
 
     float direction = 0.05f;
 
-    SpriteRenderer renderer; // 컴포넌트를 담아줄 변수 renderer
+    SpriteRenderer renderer; // SpriteRenderer 컴포넌트를 담아줄 변수 renderer
 
     void Start()
     {
